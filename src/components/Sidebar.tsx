@@ -1,25 +1,53 @@
-import React from "react";
+import React, { useState } from "react";
 
 const Sidebar = () => {
+  const [showInput, setShowInput] = useState<boolean>(false);
+  const [chatName, setChatName] = useState<string>("");
+
+  const createChat = () => {
+    setShowInput(true);
+  };
+
+  const cancelChat = () => {
+    setChatName("");
+    setShowInput(false);
+  };
+
   return (
     <div className="flex flex-col">
       <div className="flex justify-between items-center p-4 border-b sticky top-0 z-50">
         <div className="icon">😄</div>
         <div className="">
           <button className="icon">💬</button>
-          <button className="ml-4 icon">🍔</button>
+          <button className="ml-4 icon">
+            <img src="/log-out.svg" alt="logout" />
+          </button>
         </div>
       </div>
       <div className="">
-        <span className="icon">🔍</span>
+        <span className="">🔍</span>
         <input
           className="outline-none border-none"
           type="search"
           placeholder="Search chat"
           value=""
+          onChange={() => {}}
         />
       </div>
-      <button className="">START A NEW CHAT</button>
+      <div className="">
+        {showInput && (
+          <input
+            className="outline-none border-none"
+            type="text"
+            placeholder="Enter your Chat Name"
+            value={chatName}
+            onChange={(e: any) => setChatName(e.target.value)}
+          />
+        )}
+        <button className="" onClick={!showInput ? createChat : cancelChat}>
+          {!showInput ? "➕" : "❌"}
+        </button>
+      </div>
     </div>
   );
 };
