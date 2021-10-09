@@ -1,3 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
 html,
 body {
   padding: 0;
@@ -11,6 +19,12 @@ a {
   text-decoration: none;
 }
 
-* {
-  box-sizing: border-box;
+.icon {
+  font-size: 28px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.icon:hover {
+  opacity: 0.8;
 }
