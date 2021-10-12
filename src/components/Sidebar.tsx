@@ -1,16 +1,38 @@
 import React, { useState } from "react";
-import { auth } from "../db/firebaseConfig";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth, db } from "../db/firebaseConfig";
+import * as EmailValidator from "email-validator";
+import { useCollection } from "react-firebase-hooks/firestore";
 
 const Sidebar = () => {
+  const [user] = useAuthState(auth);
   const [showInput, setShowInput] = useState<boolean>(false);
-  const [chatName, setChatName] = useState<string>("");
+  const [chatEmail, setChatEmail] = useState<string>("");
+  const userChatRef = db
+    .collection("chats")
+    .where("users", "array-contains", user?.email);
+  const [chatsSnapshot] = useCollection(userChatRef);
 
   const createChat = () => {
     setShowInput(true);
+
+    if (!chatEmail) return null;
+
+    if (EmailValidator.validate(chatEmail) && chatEmail !== user?.email) {
+      db.collection("chats").add({
+        users: [user?.email, chatEmail],
+      });
+    }
+  };
+
+  const chatAlreadyExists = (recipientEmail: string) => {
+    chatsSnapshot?.docs.find((chat) =>
+      chat.data().users.find((user: any) => user === recipientEmail)
+    );
   };
 
   const cancelChat = () => {
-    setChatName("");
+    setChatEmail("");
     setShowInput(false);
   };
 
@@ -46,9 +68,9 @@ const Sidebar = () => {
           <input
             className="outline-none border-none"
             type="text"
-            placeholder="Enter your Chat Name"
-            value={chatName}
-            onChange={(e: any) => setChatName(e.target.value)}
+            placeholder="Enter the email you want to chat with"
+            value={chatEmail}
+            onChange={(e: any) => setChatEmail(e.target.value)}
           />
         )}
         <button className="" onClick={!showInput ? createChat : cancelChat}>
