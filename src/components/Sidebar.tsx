@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { auth } from "../db/firebaseConfig";
 
 const Sidebar = () => {
   const [showInput, setShowInput] = useState<boolean>(false);
@@ -19,7 +20,13 @@ const Sidebar = () => {
         <div className="icon">😄</div>
         <div className="">
           <button className="icon">💬</button>
-          <button className="ml-4 icon">
+          <button
+            className="ml-4 icon"
+            onClick={() => {
+              console.log("logout");
+              auth.signOut();
+            }}
+          >
             <img src="/log-out.svg" alt="logout" />
           </button>
         </div>
