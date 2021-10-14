@@ -8,28 +8,43 @@ const Sidebar = () => {
   const [user] = useAuthState(auth);
   const [showInput, setShowInput] = useState<boolean>(false);
   const [chatEmail, setChatEmail] = useState<string>("");
+  const [error, setError] = useState<string>("");
+
   const userChatRef = db
     .collection("chats")
     .where("users", "array-contains", user?.email);
   const [chatsSnapshot] = useCollection(userChatRef);
 
-  const createChat = () => {
-    setShowInput(true);
-
+  const createChat = (e: any) => {
+    e?.preventDefault();
     if (!chatEmail) return null;
 
-    if (EmailValidator.validate(chatEmail) && chatEmail !== user?.email) {
+    if (
+      EmailValidator.validate(chatEmail) &&
+      !chatAlreadyExists(chatEmail) &&
+      chatEmail !== user?.email
+    ) {
+      console.log(chatEmail);
       db.collection("chats").add({
         users: [user?.email, chatEmail],
       });
-    }
+    } else setError("Enter correct email");
   };
 
-  const chatAlreadyExists = (recipientEmail: string) => {
-    chatsSnapshot?.docs.find((chat) =>
-      chat.data().users.find((user: any) => user === recipientEmail)
+  error &&
+    (() => {
+      setInterval(() => setError(""), 5000); // use react-toast
+      console.log(error);
+    })();
+
+  type chatAlreadyExistsType = (recipientEmail: string) => boolean;
+
+  const chatAlreadyExists: chatAlreadyExistsType = (recipientEmail) =>
+    !!chatsSnapshot?.docs.find(
+      (chat) =>
+        chat.data().users.find((user: any) => user === recipientEmail)?.length >
+        0
     );
-  };
 
   const cancelChat = () => {
     setChatEmail("");
@@ -42,13 +57,7 @@ const Sidebar = () => {
         <div className="icon">😄</div>
         <div className="">
           <button className="icon">💬</button>
-          <button
-            className="ml-4 icon"
-            onClick={() => {
-              console.log("logout");
-              auth.signOut();
-            }}
-          >
+          <button className="ml-4 icon" onClick={() => auth.signOut()}>
             <img src="/log-out.svg" alt="logout" />
           </button>
         </div>
@@ -63,20 +72,28 @@ const Sidebar = () => {
           onChange={() => {}}
         />
       </div>
-      <div className="">
+      <div className="flex">
         {showInput && (
-          <input
-            className="outline-none border-none"
-            type="text"
-            placeholder="Enter the email you want to chat with"
-            value={chatEmail}
-            onChange={(e: any) => setChatEmail(e.target.value)}
-          />
+          <form onSubmit={(e: any) => createChat(e)}>
+            <input
+              className="outline-none border-none"
+              type="email"
+              placeholder="Enter Email to Chat"
+              value={chatEmail}
+              onChange={(e: any) => setChatEmail(e.target.value)}
+              required
+            />
+            <input type="submit" value="✅" />
+          </form>
         )}
-        <button className="" onClick={!showInput ? createChat : cancelChat}>
+        <button
+          className=""
+          onClick={!showInput ? () => setShowInput(true) : cancelChat}
+        >
           {!showInput ? "➕" : "❌"}
         </button>
       </div>
+      {error && <span className="">{error}</span>}
     </div>
   );
 };
