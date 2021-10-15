@@ -56,7 +56,11 @@ const Sidebar = () => {
   return (
     <div className="flex flex-col">
       <div className="flex justify-between items-center p-4 border-b sticky top-0 z-50">
-        <div className="icon">😄</div>
+        <img
+          className="rounded-full w-14"
+          src={user?.photoURL ?? "/user.svg"}
+          alt=""
+        />
         <div className="">
           <button className="icon">💬</button>
           <button className="ml-4 icon" onClick={() => auth.signOut()}>
