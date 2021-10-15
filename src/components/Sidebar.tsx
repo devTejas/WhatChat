@@ -3,6 +3,8 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "../db/firebaseConfig";
 import * as EmailValidator from "email-validator";
 import { useCollection } from "react-firebase-hooks/firestore";
+import Chat from "../pages/chat";
+import userCheck from "../../public/user-check.svg";
 
 const Sidebar = () => {
   const [user] = useAuthState(auth);
@@ -63,7 +65,7 @@ const Sidebar = () => {
         </div>
       </div>
       <div className="">
-        <span className="">🔍</span>
+        <img src="/search.svg" alt="" />
         <input
           className="outline-none border-none"
           type="search"
@@ -83,17 +85,26 @@ const Sidebar = () => {
               onChange={(e: any) => setChatEmail(e.target.value)}
               required
             />
-            <input type="submit" value="✅" />
+            <button type="submit">
+              <img src="/user-check.svg" alt="" />
+            </button>
           </form>
         )}
         <button
           className=""
           onClick={!showInput ? () => setShowInput(true) : cancelChat}
         >
-          {!showInput ? "➕" : "❌"}
+          {!showInput ? (
+            <img src="/user-plus.svg" alt="" />
+          ) : (
+            <img src="/user-x.svg" alt="" />
+          )}
         </button>
       </div>
       {error && <span className="">{error}</span>}
+      {chatsSnapshot?.docs?.map((chat) => (
+        <Chat key={chat.id} id={chat.id} users={chat.data().users} />
+      ))}
     </div>
   );
 };
