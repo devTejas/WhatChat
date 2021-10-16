@@ -27,9 +27,12 @@ const Sidebar = () => {
       chatEmail !== user?.email
     ) {
       console.log(chatEmail);
-      db.collection("chats").add({
-        users: [user?.email, chatEmail],
-      });
+      db.collection("chats")
+        .add({
+          users: [user?.email, chatEmail],
+        })
+        .then(() => setChatEmail(""))
+        .catch(() => setError("Enter correct email"));
     } else setError("Enter correct email");
   };
 
@@ -54,54 +57,61 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="flex flex-col">
-      <div className="flex justify-between items-center p-4 border-b sticky top-0 z-50">
+    <div className="px-2 border-r w-72 h-screen overflow-y-scroll scrollbar-none overflow-">
+      <div className="flex justify-between items-center py-4 border-b sticky top-0 z-50">
         <img
-          className="rounded-full w-14"
+          className="rounded-full w-12"
           src={user?.photoURL ?? "/user.svg"}
           alt=""
         />
-        <div className="">
+        <div className="float-right">
           <button className="icon">💬</button>
           <button className="ml-4 icon" onClick={() => auth.signOut()}>
             <img src="/log-out.svg" alt="logout" />
           </button>
         </div>
       </div>
-      <div className="">
-        <img src="/search.svg" alt="" />
-        <input
-          className="outline-none border-none"
-          type="search"
-          placeholder="Search chat"
-          value=""
-          onChange={() => {}}
-        />
-      </div>
-      <div className="flex">
+      <div className="flex bg-indigo-700 p-2 rounded">
         {showInput && (
-          <form onSubmit={(e: any) => createChat(e)}>
+          <form
+            className="flex items-center bg-indigo-700"
+            onSubmit={(e: any) => createChat(e)}
+          >
             <input
-              className="outline-none border-none"
+              className="outline-none border-none w-48 bg-indigo-700"
               type="email"
               placeholder="Enter Email to Chat"
               value={chatEmail}
               onChange={(e: any) => setChatEmail(e.target.value)}
               required
             />
-            <button type="submit">
+            <button
+              className="bg-white rounded-2xl p-1 hover:bg-green-300"
+              type="submit"
+            >
               <img src="/user-check.svg" alt="" />
             </button>
           </form>
         )}
         <button
-          className=""
+          className="rounded-2xl"
           onClick={!showInput ? () => setShowInput(true) : cancelChat}
         >
           {!showInput ? (
-            <img src="/user-plus.svg" alt="" />
+            <p className="flex items-center text-white font-bold">
+              <img
+                className="bg-white rounded-2xl p-1 mr-2 hover:bg-green-300"
+                src="/user-plus.svg"
+                alt=""
+              />
+              ADD A NEW USER
+            </p>
           ) : (
-            <img src="/user-x.svg" alt="" />
+            <img
+              className="bg-white rounded-2xl p-1 hover:bg-red-500"
+              src="/user-x.svg"
+              alt=""
+            />
           )}
         </button>
       </div>

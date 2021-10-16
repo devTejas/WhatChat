@@ -1,3 +1,4 @@
+import { useRouter } from "next/dist/client/router";
 import React from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollection } from "react-firebase-hooks/firestore";
@@ -10,7 +11,6 @@ const Chat = ({ id, users }: ChatPropsType) => {
     db.collection("users").where("email", "==", getRecipientEmail(users, user))
   );
 
-  // our db has users & chats
   /*
     // chats b/w users
     Chats:[
@@ -33,10 +33,18 @@ const Chat = ({ id, users }: ChatPropsType) => {
   */
   const recipient = recipientSnapshot?.docs?.[0]?.data();
   const recipientEmail = getRecipientEmail(users, user);
-  console.log(recipientSnapshot?.docs);
+
+  const router = useRouter();
+
+  const enterChat = () => {
+    router.push(`/chat/${id}`);
+  };
 
   return (
-    <div className="flex items-center hover:bg-gray-100 cursor-pointer font-semibold break-words select-none">
+    <div
+      className="flex items-center hover:bg-gray-100 cursor-pointer font-semibold break-words select-none"
+      onClick={enterChat}
+    >
       <img className="rounded-2xl w-7 bg-gray-400 m-3" src="/user.svg" alt="" />
       <p>{recipientEmail}</p>
     </div>
