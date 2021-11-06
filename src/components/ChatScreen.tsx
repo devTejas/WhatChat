@@ -95,7 +95,6 @@ const ChatScreen = ({ chat, messages }: any) => {
         <div className="">{/* EndofMessagesDiv */}</div>
       </div>
       <form className="flex items-center p-3 sticky bottom-0 bg-white z-50">
-        🙂
         <input
           type="text"
           className="flex-1 outline-0 border-0 rounded-lg bg-gray-100 p-3 mx-4"
